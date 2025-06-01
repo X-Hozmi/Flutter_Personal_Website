@@ -1,10 +1,9 @@
 part of '../project_page.dart';
 
-Widget buildProjectCard(
-  BuildContext context,
-  Project project,
-  double screenWidth,
-) {
+Widget buildProjectCard(BuildContext context, Project project) {
+  final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+  final isTablet = ResponsiveBreakpoints.of(context).isTablet;
+
   return InkWell(
     focusColor: Colors.transparent,
     hoverColor: Colors.transparent,
@@ -27,7 +26,7 @@ Widget buildProjectCard(
         children: [
           // Project Image Placeholder with Language-based Color
           Expanded(
-            flex: screenWidth < 600 ? 1 : 2,
+            flex: isMobile ? 1 : 2,
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -45,7 +44,7 @@ Widget buildProjectCard(
                   Center(
                     child: Icon(
                       Icons.web,
-                      size: screenWidth < 600 ? 32 : 48,
+                      size: isMobile ? 32 : 48,
                       // color: Colors.white38,
                       color: Theme.of(
                         context,
@@ -60,7 +59,7 @@ Widget buildProjectCard(
           Expanded(
             flex: 2,
             child: Padding(
-              padding: EdgeInsets.all(screenWidth < 600 ? 12 : 16),
+              padding: EdgeInsets.all(isMobile || isTablet ? 12 : 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -70,7 +69,7 @@ Widget buildProjectCard(
                     style: TextStyle(
                       // color: Colors.white,
                       color: Theme.of(context).colorScheme.onSurface,
-                      fontSize: screenWidth < 600 ? 16 : 18,
+                      fontSize: isMobile || isTablet ? 16 : 18,
                       fontWeight: FontWeight.w600,
                     ),
                     maxLines: 2,
@@ -88,11 +87,11 @@ Widget buildProjectCard(
                         color: Theme.of(
                           context,
                         ).colorScheme.onSurface.withValues(alpha: 0.7),
-                        fontSize: screenWidth < 600 ? 12 : 14,
+                        fontSize: isMobile || isTablet ? 12 : 14,
                         height: 1.4,
                       ),
                       overflow: TextOverflow.ellipsis,
-                      maxLines: screenWidth < 600 ? 2 : 3,
+                      maxLines: isMobile || isTablet ? 2 : 3,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -105,8 +104,8 @@ Widget buildProjectCard(
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return SizedBox(
-                          height: screenWidth < 600 ? 16 : 20,
-                          width: screenWidth < 600 ? 16 : 20,
+                          height: isMobile || isTablet ? 16 : 20,
+                          width: isMobile || isTablet ? 16 : 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             // color: Color(0xFF58A6FF),
@@ -120,8 +119,8 @@ Widget buildProjectCard(
                       if (languages.isEmpty) {
                         return Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth < 600 ? 6 : 8,
-                            vertical: screenWidth < 600 ? 3 : 4,
+                            horizontal: isMobile || isTablet ? 6 : 8,
+                            vertical: isMobile || isTablet ? 3 : 4,
                           ),
                           decoration: BoxDecoration(
                             color:
@@ -143,7 +142,7 @@ Widget buildProjectCard(
                               color: Theme.of(
                                 context,
                               ).colorScheme.onSurface.withValues(alpha: 0.5),
-                              fontSize: screenWidth < 600 ? 10 : 12,
+                              fontSize: isMobile || isTablet ? 10 : 12,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -156,14 +155,15 @@ Widget buildProjectCard(
                           children:
                               languages
                                   .take(
-                                    screenWidth < 600 ? 2 : 3,
+                                    isMobile || isTablet ? 2 : 3,
                                   ) // Limit on mobile
                                   .map(
                                     (language) => Container(
                                       margin: const EdgeInsets.only(right: 6),
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: screenWidth < 600 ? 6 : 8,
-                                        vertical: screenWidth < 600 ? 3 : 4,
+                                        horizontal:
+                                            isMobile || isTablet ? 6 : 8,
+                                        vertical: isMobile || isTablet ? 3 : 4,
                                       ),
                                       decoration: BoxDecoration(
                                         color: Theme.of(context)
@@ -185,7 +185,8 @@ Widget buildProjectCard(
                                               Theme.of(
                                                 context,
                                               ).colorScheme.primary,
-                                          fontSize: screenWidth < 600 ? 10 : 12,
+                                          fontSize:
+                                              isMobile || isTablet ? 10 : 12,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),

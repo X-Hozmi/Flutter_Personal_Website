@@ -26,13 +26,13 @@ Widget mobileLayout(ProfileController profileController, double imageSize) {
                     Icon(
                       Icons.broken_image,
                       color: Color.fromRGBO(0, 107, 179, 1),
-                      size: 24,
+                      size: 20,
                     ),
                     SizedBox(height: 4),
                     Text(
                       'Tidak ada gambar',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 9,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
@@ -48,28 +48,15 @@ Widget mobileLayout(ProfileController profileController, double imageSize) {
       Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            'Hey there 👋, am',
-            style: TextStyle(
-              // color: Colors.white70,
-              fontSize: 16,
-            ),
-          ),
+          const Text('Hey there 👋, am', style: TextStyle(fontSize: 14)),
           Text(
             profileController.gitHubProfile!.name,
-            style: const TextStyle(
-              // color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           Text(
             developerRoles,
-            style: TextStyle(
-              // color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: const TextStyle(fontSize: 13),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),

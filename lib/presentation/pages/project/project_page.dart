@@ -9,6 +9,7 @@ import 'package:flutter_personal_website/utils/state_enum.dart';
 import 'package:flutter_personal_website/utils/url_launch.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:responsive_framework/responsive_framework.dart';
 
 part 'parts/fetch_languages.dart';
 part 'parts/build_projects_card.dart';

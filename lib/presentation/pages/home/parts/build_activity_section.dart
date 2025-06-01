@@ -12,10 +12,11 @@ Widget buildActivitiesSection(
   if (nonSpotifyActivities.isEmpty) return const SizedBox.shrink();
 
   final activity = nonSpotifyActivities.first;
+  final isMobile = ResponsiveBreakpoints.of(context).isMobile;
 
   return Container(
-    margin: const EdgeInsets.only(top: 12),
-    padding: const EdgeInsets.all(12),
+    margin: EdgeInsets.only(top: isMobile ? 8 : 12),
+    padding: EdgeInsets.all(isMobile ? 8 : 12),
     decoration: BoxDecoration(
       color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(6),
@@ -30,7 +31,7 @@ Widget buildActivitiesSection(
           '${activity.activityType} ${activity.name}',
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
-            fontSize: 12,
+            fontSize: isMobile ? 11 : 12,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -38,7 +39,10 @@ Widget buildActivitiesSection(
           const SizedBox(height: 2),
           Text(
             activity.details!,
-            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: isMobile ? 12 : 13,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -51,7 +55,7 @@ Widget buildActivitiesSection(
               color: Theme.of(
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 12,
+              fontSize: isMobile ? 11 : 12,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

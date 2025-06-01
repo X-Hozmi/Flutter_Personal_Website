@@ -7,6 +7,7 @@ import 'package:flutter_personal_website/utils/state_enum.dart';
 import 'package:flutter_personal_website/utils/url_launch.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 part 'parts/build_discord_presence_content.dart';
 part 'parts/desktop_layout.dart';
@@ -25,8 +26,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isMobile ? 16 : 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -91,11 +94,11 @@ class HomePage extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
+                    SizedBox(height: isMobile ? 20 : 40),
                     // Profile Section
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(isMobile ? 12 : 16),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(8),
@@ -113,10 +116,11 @@ class HomePage extends StatelessWidget {
                           color: Theme.of(
                             context,
                           ).colorScheme.onSurface.withValues(alpha: 0.7),
+                          fontSize: isMobile ? 14 : 16,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: isMobile ? 20 : 30),
 
                     // Responsive Profile Section
                     InkWell(
@@ -128,42 +132,29 @@ class HomePage extends StatelessWidget {
                           () => urlLauncher(
                             Uri.parse(profileController.gitHubProfile!.htmlUrl),
                           ),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final isWideScreen = constraints.maxWidth > 600;
-                          final imageSize = isWideScreen ? 150.0 : 120.0;
-
-                          if (isWideScreen) {
-                            // Desktop/Tablet layout - Row
-                            return desktopLayout(profileController, imageSize);
-                          } else {
-                            // Mobile layout - Column
-                            return mobileLayout(profileController, imageSize);
-                          }
-                        },
-                      ),
+                      child: _buildResponsiveProfileLayout(context),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: isMobile ? 15 : 20),
 
-                    // Discord Presence (placeholder)
-                    const Align(
+                    // Discord Presence
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Discord Presence',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: isMobile ? 18 : 20,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 15),
+                    SizedBox(height: isMobile ? 10 : 15),
 
                     Obx(() {
                       return Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(isMobile ? 12 : 16),
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8),
@@ -180,32 +171,30 @@ class HomePage extends StatelessWidget {
                         ),
                       );
                     }),
-                    const SizedBox(height: 30),
+                    SizedBox(height: isMobile ? 20 : 30),
 
                     // About Section
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'A little about me',
                         style: TextStyle(
-                          // color: Colors.white,
-                          fontSize: 20,
+                          fontSize: isMobile ? 18 : 20,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 15),
+                    SizedBox(height: isMobile ? 10 : 15),
                     Text(
                       profileController.gitHubProfile!.bio,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        // color: Colors.white70,
-                        fontSize: 16,
+                      style: TextStyle(
+                        fontSize: isMobile ? 14 : 16,
                         height: 1.5,
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: isMobile ? 20 : 30),
 
                     // CTA Button
                     ElevatedButton(
@@ -215,27 +204,32 @@ class HomePage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00D8FF),
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 16 : 24,
+                          vertical: isMobile ? 10 : 12,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Check out all projects',
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                            isMobile
+                                ? 'View Projects'
+                                : 'Check out all projects',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: isMobile ? 14 : 16,
+                            ),
                           ),
-                          SizedBox(width: 8),
-                          Icon(Icons.arrow_forward, size: 18),
+                          const SizedBox(width: 8),
+                          Icon(Icons.arrow_forward, size: isMobile ? 16 : 18),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: isMobile ? 30 : 40),
                   ],
                 );
 
@@ -246,5 +240,27 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildResponsiveProfileLayout(BuildContext context) {
+    final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+    final isTablet = ResponsiveBreakpoints.of(context).isTablet;
+    final isDesktop = ResponsiveBreakpoints.of(context).isDesktop;
+
+    // Determine image size based on screen size
+    double imageSize;
+    if (isDesktop) {
+      imageSize = 150.0;
+    } else if (isTablet) {
+      imageSize = 130.0;
+    } else {
+      imageSize = 120.0;
+    }
+
+    if (isMobile) {
+      return mobileLayout(profileController, imageSize);
+    } else {
+      return desktopLayout(profileController, imageSize);
+    }
   }
 }

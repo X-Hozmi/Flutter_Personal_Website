@@ -5,10 +5,11 @@ Widget buildSpotifySection(
   DiscordPresenceController discordController,
 ) {
   final spotify = discordController.currentSpotify!;
+  final isMobile = ResponsiveBreakpoints.of(context).isMobile;
 
   return Container(
-    margin: const EdgeInsets.only(top: 12),
-    padding: const EdgeInsets.all(12),
+    margin: EdgeInsets.only(top: isMobile ? 8 : 12),
+    padding: EdgeInsets.all(isMobile ? 8 : 12),
     decoration: BoxDecoration(
       color: const Color(0xFF1DB954).withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(6),
@@ -21,26 +22,26 @@ Widget buildSpotifySection(
           borderRadius: BorderRadius.circular(4),
           child: CachedNetworkImage(
             imageUrl: spotify.albumArtUrl,
-            width: 40,
-            height: 40,
+            width: isMobile ? 32 : 40,
+            height: isMobile ? 32 : 40,
             fit: BoxFit.cover,
             placeholder:
                 (context, url) => Container(
-                  width: 40,
-                  height: 40,
+                  width: isMobile ? 32 : 40,
+                  height: isMobile ? 32 : 40,
                   color: Colors.grey.shade300,
-                  child: const Icon(Icons.music_note),
+                  child: Icon(Icons.music_note, size: isMobile ? 16 : 20),
                 ),
             errorWidget:
                 (context, url, error) => Container(
-                  width: 40,
-                  height: 40,
+                  width: isMobile ? 32 : 40,
+                  height: isMobile ? 32 : 40,
                   color: Colors.grey.shade300,
-                  child: const Icon(Icons.music_note),
+                  child: Icon(Icons.music_note, size: isMobile ? 16 : 20),
                 ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: isMobile ? 8 : 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,15 +50,15 @@ Widget buildSpotifySection(
                 'Listening to Spotify',
                 style: TextStyle(
                   color: const Color(0xFF1DB954),
-                  fontSize: 11,
+                  fontSize: isMobile ? 10 : 11,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
                 spotify.song,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: 13,
+                  fontSize: isMobile ? 12 : 13,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -68,7 +69,7 @@ Widget buildSpotifySection(
                   color: Theme.of(
                     context,
                   ).colorScheme.onSurface.withValues(alpha: 0.7),
-                  fontSize: 12,
+                  fontSize: isMobile ? 11 : 12,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

@@ -10,28 +10,15 @@ Widget desktopLayout(ProfileController profileController, double imageSize) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Hey there 👋, am',
-                style: TextStyle(
-                  // color: Colors.white70,
-                  fontSize: 16,
-                ),
-              ),
+              const Text('Hey there 👋, am', style: TextStyle(fontSize: 16)),
               Text(
                 profileController.gitHubProfile!.name,
                 style: const TextStyle(
-                  // color: Colors.white,
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                developerRoles,
-                style: TextStyle(
-                  // color: Colors.white70,
-                  fontSize: 16,
-                ),
-              ),
+              Text(developerRoles, style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 30),
             ],
           ),

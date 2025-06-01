@@ -4,28 +4,37 @@ Widget buildDiscordPresenceContent(
   BuildContext context,
   DiscordPresenceController discordController,
 ) {
+  final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+
   switch (discordController.state) {
     case RequestState.loading:
-      return const Row(
+      return Row(
         children: [
           SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
+            width: isMobile ? 16 : 20,
+            height: isMobile ? 16 : 20,
+            child: const CircularProgressIndicator(
               strokeWidth: 2,
               color: Color(0xFF5865F2),
             ),
           ),
-          SizedBox(width: 12),
-          Text('Loading Discord presence...'),
+          SizedBox(width: isMobile ? 8 : 12),
+          Text(
+            'Loading Discord presence...',
+            style: TextStyle(fontSize: isMobile ? 13 : 14),
+          ),
         ],
       );
 
     case RequestState.error:
       return Row(
         children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 20),
-          const SizedBox(width: 12),
+          Icon(
+            Icons.error_outline,
+            color: Colors.red,
+            size: isMobile ? 16 : 20,
+          ),
+          SizedBox(width: isMobile ? 8 : 12),
           Expanded(
             child: Text(
               'Failed to load Discord presence',
@@ -33,12 +42,16 @@ Widget buildDiscordPresenceContent(
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.7),
+                fontSize: isMobile ? 13 : 14,
               ),
             ),
           ),
           TextButton(
             onPressed: () => discordController.refreshDiscordPresence(),
-            child: const Text('Retry'),
+            child: Text(
+              'Retry',
+              style: TextStyle(fontSize: isMobile ? 12 : 14),
+            ),
           ),
         ],
       );
@@ -48,7 +61,10 @@ Widget buildDiscordPresenceContent(
       final presence = discordController.discordPresence;
 
       if (user == null || presence == null) {
-        return const Text('No Discord data available');
+        return Text(
+          'No Discord data available',
+          style: TextStyle(fontSize: isMobile ? 13 : 14),
+        );
       }
 
       return Column(
@@ -59,16 +75,20 @@ Widget buildDiscordPresenceContent(
               // Discord Avatar or Default Icon
               user.avatar != null
                   ? CircleAvatar(
-                    radius: 15,
+                    radius: isMobile ? 12 : 15,
                     backgroundImage: CachedNetworkImageProvider(user.avatarUrl),
                     backgroundColor: const Color(0xFF5865F2),
                   )
-                  : const CircleAvatar(
-                    radius: 15,
-                    backgroundColor: Color(0xFF5865F2),
-                    child: Icon(Icons.discord, size: 16, color: Colors.white),
+                  : CircleAvatar(
+                    radius: isMobile ? 12 : 15,
+                    backgroundColor: const Color(0xFF5865F2),
+                    child: Icon(
+                      Icons.discord,
+                      size: isMobile ? 14 : 16,
+                      color: Colors.white,
+                    ),
                   ),
-              const SizedBox(width: 10),
+              SizedBox(width: isMobile ? 8 : 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,6 +98,7 @@ Widget buildDiscordPresenceContent(
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w500,
+                        fontSize: isMobile ? 13 : 14,
                       ),
                     ),
                     Text(
@@ -86,7 +107,7 @@ Widget buildDiscordPresenceContent(
                         color: Theme.of(
                           context,
                         ).colorScheme.onSurface.withValues(alpha: 0.7),
-                        fontSize: 12,
+                        fontSize: isMobile ? 11 : 12,
                       ),
                     ),
                   ],
@@ -94,8 +115,8 @@ Widget buildDiscordPresenceContent(
               ),
               // Status indicator
               Container(
-                width: 12,
-                height: 12,
+                width: isMobile ? 10 : 12,
+                height: isMobile ? 10 : 12,
                 decoration: BoxDecoration(
                   color: getStatusColor(discordController),
                   shape: BoxShape.circle,
@@ -121,6 +142,9 @@ Widget buildDiscordPresenceContent(
       );
 
     default:
-      return const Text('Discord presence unavailable');
+      return Text(
+        'Discord presence unavailable',
+        style: TextStyle(fontSize: isMobile ? 13 : 14),
+      );
   }
 }

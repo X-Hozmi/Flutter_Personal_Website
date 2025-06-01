@@ -49,6 +49,10 @@ Widget buildProjectsContent(
       );
 
     case RequestState.loaded:
+      final isMobile = ResponsiveBreakpoints.of(context).isMobile;
+      final isTablet = ResponsiveBreakpoints.of(context).isTablet;
+      final isDesktop = ResponsiveBreakpoints.of(context).isDesktop;
+
       return Column(
         children: [
           // Responsive Project Grid
@@ -60,19 +64,19 @@ Widget buildProjectsContent(
               double crossAxisSpacing;
               double mainAxisSpacing;
 
-              if (constraints.maxWidth >= 1200) {
+              if (isDesktop) {
                 // Large desktop
-                crossAxisCount = 3;
+                crossAxisCount = 2;
                 childAspectRatio = 0.8;
                 crossAxisSpacing = 24;
                 mainAxisSpacing = 24;
-              } else if (constraints.maxWidth >= 800) {
+              } else if (isTablet) {
                 // Desktop/Tablet
                 crossAxisCount = 2;
                 childAspectRatio = 0.75;
                 crossAxisSpacing = 20;
                 mainAxisSpacing = 20;
-              } else if (constraints.maxWidth >= 600) {
+              } else if (isMobile && constraints.maxWidth > 600) {
                 // Small tablet
                 crossAxisCount = 2;
                 childAspectRatio = 0.7;
@@ -100,7 +104,6 @@ Widget buildProjectsContent(
                   return buildProjectCard(
                     context,
                     projectController.projects[index],
-                    constraints.maxWidth,
                   );
                 },
               );
