@@ -3,21 +3,22 @@ import 'dart:convert';
 const String gitHubApiUrl = 'https://api.github.com';
 
 const String mediumUser =
-    '@MediumUsername'; // Replace with your Medium username. Please refer to https://medium.com for how to get your Medium username.
+    '@haidar17042001'; // Replace with your Medium username. Please refer to https://medium.com for how to get your Medium username.
 
 const String gitHubUsername =
-    'GitHubUsername'; // Replace with your GitHub username. Please refer to https://github.com for how to get your GitHub username.
+    'X-Hozmi'; // Replace with your GitHub username. Please refer to https://github.com for how to get your GitHub username.
 
 const String discordPresenceUserId =
-    '1234567'; // Replace with your Discord user ID. Please refer to https://github.com/Phineas/lanyard for how to get your Discord user ID.
+    '331943910937067530'; // Replace with your Discord user ID. Please refer to https://github.com/Phineas/lanyard for how to get your Discord user ID.
 
 final String greeting = 'Hello there, I\'m a software developer!';
 
-final String developerRoles = 'Flutter Developer / Mobile Developer';
+final String developerRoles =
+    'Mobile Flutter Developer / Laravel Backend Developer / DevOps Engineer';
 
 final String gitHubAccessToken = base64Encode(
   utf8.encode(
-    'GitHubUsername:github_access_token',
+    'X-Hozmi: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',
   ), // Replace with your GitHub username and personal access token --> user:access_token. Please refer to https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token for how to create a personal access token.
 );
 
