@@ -9,8 +9,8 @@ class SpotifyTimestampsModel extends Equatable {
 
   factory SpotifyTimestampsModel.fromJson(Map<String, dynamic> json) {
     return SpotifyTimestampsModel(
-      start: json['start'] ?? 0,
-      end: json['end'] ?? 0,
+      start: json['start'] as int? ?? 0,
+      end: json['end'] as int? ?? 0,
     );
   }
 

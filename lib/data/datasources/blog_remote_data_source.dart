@@ -31,7 +31,8 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
           .timeout(timeoutDuration);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> apiResponse = json.decode(response.body);
+        final Map<String, dynamic> apiResponse =
+            json.decode(response.body) as Map<String, dynamic>;
 
         if (apiResponse['status'] != 'ok') {
           throw ServerException();

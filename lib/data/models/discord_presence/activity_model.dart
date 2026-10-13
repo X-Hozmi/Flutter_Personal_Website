@@ -24,19 +24,23 @@ class ActivityModel extends Equatable {
 
   factory ActivityModel.fromJson(Map<String, dynamic> json) {
     return ActivityModel(
-      type: json['type'] ?? 0,
-      name: json['name'] ?? '',
-      details: json['details'],
-      state: json['state'],
+      type: json['type'] as int? ?? 0,
+      name: json['name'] as String? ?? '',
+      details: json['details'] as String?,
+      state: json['state'] as String?,
       timestamps:
           json['timestamps'] != null
-              ? ActivityTimestampsModel.fromJson(json['timestamps'])
+              ? ActivityTimestampsModel.fromJson(
+                json['timestamps'] as Map<String, dynamic>,
+              )
               : null,
       assets:
           json['assets'] != null
-              ? ActivityAssetsModel.fromJson(json['assets'])
+              ? ActivityAssetsModel.fromJson(
+                json['assets'] as Map<String, dynamic>,
+              )
               : null,
-      applicationId: json['application_id'],
+      applicationId: json['application_id'] as String?,
     );
   }
 

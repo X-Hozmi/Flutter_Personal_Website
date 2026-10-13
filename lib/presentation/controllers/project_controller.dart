@@ -1,42 +1,51 @@
-import 'package:flutter_personal_website/domain/entities/project/project.dart';
-import 'package:flutter_personal_website/domain/usecases/get_projects_usecase.dart';
+import 'package:flutter_personal_website/domain/entities/github_repo.dart';
+import 'package:flutter_personal_website/domain/usecases/get_github_repos_usecase.dart';
 import 'package:flutter_personal_website/utils/state_enum.dart';
 import 'package:get/get.dart';
 
 class ProjectController extends GetxController {
-  final GetProjects getProjectsUseCase;
+  final GetGitHubRepos getGitHubReposUseCase;
 
   final Rx<RequestState> _state = RequestState.initial.obs;
   final RxString _message = ''.obs;
-  final RxList<Project> _projects = RxList<Project>([]);
+  final RxList<GitHubRepo> _repos = RxList<GitHubRepo>([]);
 
   RequestState get state => _state.value;
   String get message => _message.value;
-  List<Project> get projects => _projects;
+  List<GitHubRepo> get repos => _repos;
 
-  ProjectController({required this.getProjectsUseCase});
+  ProjectController({required this.getGitHubReposUseCase});
 
-  Future<void> getProjects() async {
+  @override
+  void onInit() {
+    super.onInit();
+    getGitHubRepos();
+  }
+
+  Future<void> getGitHubRepos() async {
     _state.value = RequestState.loading;
     update();
 
-    final result = await getProjectsUseCase.execute();
+    final result = await getGitHubReposUseCase.execute();
 
     result.fold(
       (failure) {
         _state.value = RequestState.error;
         _message.value = failure.message;
-        _projects.clear();
+        _repos.clear();
       },
       (success) {
-        if (success.isEmpty) {
+        final visibleRepos =
+            success.where((repo) => !repo.isFork && !repo.isArchived).toList();
+
+        if (visibleRepos.isEmpty) {
           _state.value = RequestState.empty;
-          _message.value = 'No projects available yet.';
-          _projects.clear();
+          _message.value = 'No public repositories available yet.';
+          _repos.clear();
         } else {
           _state.value = RequestState.loaded;
           _message.value = '';
-          _projects.value = success;
+          _repos.value = visibleRepos;
         }
       },
     );
@@ -44,12 +53,10 @@ class ProjectController extends GetxController {
     update();
   }
 
-  Future<void> refreshProjects() async {
-    await getProjects();
-  }
+  Future<void> refreshProjects() => getGitHubRepos();
 
   void clearProjects() {
-    _projects.clear();
+    _repos.clear();
     _state.value = RequestState.initial;
     _message.value = '';
     update();

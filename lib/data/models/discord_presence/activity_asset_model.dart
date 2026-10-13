@@ -16,10 +16,10 @@ class ActivityAssetsModel extends Equatable {
 
   factory ActivityAssetsModel.fromJson(Map<String, dynamic> json) {
     return ActivityAssetsModel(
-      largeImage: json['large_image'],
-      largeText: json['large_text'],
-      smallImage: json['small_image'],
-      smallText: json['small_text'],
+      largeImage: json['large_image'] as String?,
+      largeText: json['large_text'] as String?,
+      smallImage: json['small_image'] as String?,
+      smallText: json['small_text'] as String?,
     );
   }
 

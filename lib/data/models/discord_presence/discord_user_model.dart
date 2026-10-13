@@ -24,14 +24,14 @@ class DiscordUserModel extends Equatable {
 
   factory DiscordUserModel.fromJson(Map<String, dynamic> json) {
     return DiscordUserModel(
-      id: json['id'] ?? '',
-      username: json['username'] ?? '',
-      avatar: json['avatar'],
-      discriminator: json['discriminator'] ?? '0',
-      bot: json['bot'] ?? false,
-      globalName: json['global_name'],
-      displayName: json['display_name'],
-      publicFlags: json['public_flags'] ?? 0,
+      id: json['id'] as String? ?? '',
+      username: json['username'] as String? ?? '',
+      avatar: json['avatar'] as String?,
+      discriminator: json['discriminator'] as String? ?? '0',
+      bot: json['bot'] as bool? ?? false,
+      globalName: json['global_name'] as String?,
+      displayName: json['display_name'] as String?,
+      publicFlags: json['public_flags'] as int? ?? 0,
     );
   }
 

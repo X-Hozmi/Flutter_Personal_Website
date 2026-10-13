@@ -25,22 +25,21 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await client
           .get(
             Uri.parse('$gitHubApiUrl/users/$gitHubUsername'),
-            headers: gitHubAPIHeaders,
+            headers: gitHubApiHeaders,
           )
           .timeout(timeoutDuration);
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonMap = json.decode(response.body);
-        return GitHubProfileModel.fromJson(jsonMap);
-      } else {
-        throw ServerException();
+      if (response.statusCode != 200) {
+        throw ServerException('GitHub responded ${response.statusCode}');
       }
+      final jsonMap = json.decode(response.body) as Map<String, dynamic>;
+      return GitHubProfileModel.fromJson(jsonMap);
     } on TimeoutException {
-      throw TimeoutException('Request to get blogs timed out');
-    } on FormatException {
-      throw ServerException();
-    } catch (e) {
-      throw ServerException();
+      throw TimeoutException('Request to get GitHub profile timed out');
+    } on ServerException {
+      rethrow;
+    } catch (error) {
+      throw ServerException('Invalid GitHub profile response: $error');
     }
   }
 }

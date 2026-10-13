@@ -20,12 +20,12 @@ class GitHubProfileModel extends Equatable {
 
   factory GitHubProfileModel.fromJson(Map<String, dynamic> json) {
     return GitHubProfileModel(
-      id: json['id'] ?? '',
-      login: json['login'] ?? '',
-      name: json['name'] ?? '',
-      avatarUrl: json['avatar_url'] ?? '',
-      htmlUrl: json['html_url'] ?? '',
-      bio: json['bio'] ?? '',
+      id: json['id'] as int? ?? 0,
+      login: json['login'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      avatarUrl: json['avatar_url'] as String? ?? '',
+      htmlUrl: json['html_url'] as String? ?? '',
+      bio: json['bio'] as String? ?? '',
     );
   }
 

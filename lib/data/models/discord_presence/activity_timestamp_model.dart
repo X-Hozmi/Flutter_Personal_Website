@@ -8,7 +8,10 @@ class ActivityTimestampsModel extends Equatable {
   const ActivityTimestampsModel({this.start, this.end});
 
   factory ActivityTimestampsModel.fromJson(Map<String, dynamic> json) {
-    return ActivityTimestampsModel(start: json['start'], end: json['end']);
+    return ActivityTimestampsModel(
+      start: json['start'] as int?,
+      end: json['end'] as int?,
+    );
   }
 
   ActivityTimestamps toEntity() {

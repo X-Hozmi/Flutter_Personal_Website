@@ -36,7 +36,8 @@ class DiscordPresenceRemoteDataSourceImpl
           .timeout(timeoutDuration);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = json.decode(response.body);
+        final Map<String, dynamic> jsonData =
+            json.decode(response.body) as Map<String, dynamic>;
         return DiscordPresenceModel.fromJson(jsonData);
       } else {
         throw ServerException();

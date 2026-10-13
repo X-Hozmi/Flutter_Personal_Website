@@ -33,21 +33,29 @@ class DiscordPresenceModel extends Equatable {
     final data = json['data'] as Map<String, dynamic>;
 
     return DiscordPresenceModel(
-      success: json['success'] ?? false,
-      discordUser: DiscordUserModel.fromJson(data['discord_user']),
-      discordStatus: data['discord_status'] ?? 'offline',
-      activeOnDiscordWeb: data['active_on_discord_web'] ?? false,
-      activeOnDiscordDesktop: data['active_on_discord_desktop'] ?? false,
-      activeOnDiscordMobile: data['active_on_discord_mobile'] ?? false,
-      activeOnDiscordEmbedded: data['active_on_discord_embedded'] ?? false,
-      listeningToSpotify: data['listening_to_spotify'] ?? false,
+      success: json['success'] as bool? ?? false,
+      discordUser: DiscordUserModel.fromJson(
+        data['discord_user'] as Map<String, dynamic>,
+      ),
+      discordStatus: data['discord_status'] as String? ?? 'offline',
+      activeOnDiscordWeb: data['active_on_discord_web'] as bool? ?? false,
+      activeOnDiscordDesktop:
+          data['active_on_discord_desktop'] as bool? ?? false,
+      activeOnDiscordMobile: data['active_on_discord_mobile'] as bool? ?? false,
+      activeOnDiscordEmbedded:
+          data['active_on_discord_embedded'] as bool? ?? false,
+      listeningToSpotify: data['listening_to_spotify'] as bool? ?? false,
       spotify:
           data['spotify'] != null
-              ? SpotifyModel.fromJson(data['spotify'])
+              ? SpotifyModel.fromJson(data['spotify'] as Map<String, dynamic>)
               : null,
       activities:
           (data['activities'] as List<dynamic>?)
-              ?.map((activity) => ActivityModel.fromJson(activity))
+              ?.map(
+                (activity) => ActivityModel.fromJson(
+                  activity as Map<String, dynamic>,
+                ),
+              )
               .toList() ??
           [],
     );

@@ -16,6 +16,12 @@ class ProfileController extends GetxController {
 
   ProfileController({required this.getGitHubProfileUseCase});
 
+  @override
+  void onInit() {
+    super.onInit();
+    getGitHubProfile();
+  }
+
   Future<void> getGitHubProfile() async {
     _state.value = RequestState.loading;
     update();

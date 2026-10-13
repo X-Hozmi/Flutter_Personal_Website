@@ -16,6 +16,7 @@ class DiscordPresenceController extends GetxController {
   final Rx<DiscordPresence?> _discordPresence = Rx<DiscordPresence?>(null);
 
   Timer? _periodicTimer;
+  bool _isDisposed = false;
 
   RequestState get state => _state.value;
   String get message => _message.value;
@@ -43,27 +44,40 @@ class DiscordPresenceController extends GetxController {
 
   @override
   void onClose() {
+    _isDisposed = true;
     _periodicTimer?.cancel();
     super.onClose();
   }
 
+  /// Fetches the presence.
+  ///
+  /// The loading state is only shown for the first fetch. Periodic refreshes
+  /// keep the last known presence on screen, and a failed refresh keeps the
+  /// previous data instead of replacing it with an error.
   Future<void> getDiscordPresence() async {
-    _state.value = RequestState.loading;
-    update();
+    final hasData = _discordPresence.value != null;
+    if (!hasData) {
+      _state.value = RequestState.loading;
+      update();
+    }
 
     final result = await getDiscordPresenceUseCase.execute();
 
+    // Ignore results that arrive after the controller was closed to avoid
+    // notifying disposed Rx subjects.
+    if (_isDisposed) return;
+
     result.fold(
       (failure) {
+        if (hasData) return;
         _state.value = RequestState.error;
         _message.value = failure.message;
-        _discordPresence.value = null;
       },
       (success) {
         if (!success.success) {
+          if (hasData) return;
           _state.value = RequestState.error;
           _message.value = 'Failed to fetch Discord presence';
-          _discordPresence.value = null;
         } else {
           _state.value = RequestState.loaded;
           _message.value = '';
@@ -88,13 +102,6 @@ class DiscordPresenceController extends GetxController {
 
   void stopPeriodicUpdates() {
     _periodicTimer?.cancel();
-  }
-
-  void clearDiscordPresence() {
-    _discordPresence.value = null;
-    _state.value = RequestState.initial;
-    _message.value = '';
-    update();
   }
 
   // Helper methods for UI

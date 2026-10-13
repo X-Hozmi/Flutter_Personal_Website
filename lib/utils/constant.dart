@@ -1,33 +1,35 @@
-import 'dart:convert';
-
 const String gitHubApiUrl = 'https://api.github.com';
 
-const String mediumUser =
-    '@MediumUsername'; // Replace with your Medium username. Please refer to https://medium.com for how to get your Medium username.
-
-const String gitHubUsername =
-    'GitHubUsername'; // Replace with your GitHub username. Please refer to https://github.com for how to get your GitHub username.
-
-const String discordPresenceUserId =
-    '1234567'; // Replace with your Discord user ID. Please refer to https://github.com/Phineas/lanyard for how to get your Discord user ID.
-
-final String greeting = 'Hello there, I\'m a software developer!';
-
-final String developerRoles = 'Flutter Developer / Mobile Developer';
-
-final String gitHubAccessToken = base64Encode(
-  utf8.encode(
-    'GitHubUsername:github_access_token',
-  ), // Replace with your GitHub username and personal access token --> user:access_token. Please refer to https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token for how to create a personal access token.
+/// Public identifiers used by the website.
+///
+/// None of these are secrets: they are visible to anyone visiting the site.
+/// They can be overridden at build time, e.g.
+/// `flutter build web --dart-define=GITHUB_USERNAME=someone`.
+const String gitHubUsername = String.fromEnvironment(
+  'GITHUB_USERNAME',
+  defaultValue: 'X-Hozmi',
 );
 
-final gitHubAPIHeaders = {
-  'Authorization': 'Basic $gitHubAccessToken',
-  'Accept': 'application/vnd.github.v3+json',
-  'User-Agent': 'Flutter-App',
-};
+/// Medium username (including the leading `@`) used for the blog feed.
+const String mediumUser = String.fromEnvironment(
+  'MEDIUM_USER',
+  defaultValue: '@haidar17042001',
+);
 
-final Map<String, List<String>> languageCache = {};
+/// Discord user ID for Lanyard presence.
+const String discordPresenceUserId = String.fromEnvironment(
+  'DISCORD_PRESENCE_USER_ID',
+  defaultValue: '331943910937067530',
+);
+
+/// Headers for anonymous GitHub API requests.
+///
+/// The browser never sends credentials: any token shipped in a web bundle is
+/// readable by every visitor. Rate-limit fallbacks are served from the
+/// build-time snapshot instead (see `tool/generate_github_snapshot.dart`).
+const Map<String, String> gitHubApiHeaders = {
+  'Accept': 'application/vnd.github+json',
+};
 
 class Routes {
   static const String homePage = '/';

@@ -1,35 +1,46 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter_personal_website/data/datasources/github_snapshot_data_source.dart';
 import 'package:flutter_personal_website/data/datasources/project_remote_data_source.dart';
-import 'package:flutter_personal_website/domain/entities/project/project.dart';
+import 'package:flutter_personal_website/domain/entities/github_repo.dart';
 import 'package:flutter_personal_website/domain/repositories/project_repository.dart';
-import 'package:flutter_personal_website/utils/exception.dart';
 import 'package:flutter_personal_website/utils/failure.dart';
 
+/// Serves live repositories, falling back to the bundled build-time snapshot
+/// when the anonymous GitHub API is rate limited or unreachable.
 class ProjectRepositoryImpl implements ProjectRepository {
   final ProjectRemoteDataSource remoteDataSource;
+  final GitHubSnapshotDataSource snapshotDataSource;
 
-  ProjectRepositoryImpl({required this.remoteDataSource});
+  ProjectRepositoryImpl({
+    required this.remoteDataSource,
+    required this.snapshotDataSource,
+  });
 
   @override
-  Future<Either<Failure, List<Project>>> getProjects() async {
+  Future<Either<Failure, List<GitHubRepo>>> getGitHubRepos() async {
     try {
-      final projectModels = await remoteDataSource.getProjects();
-      final projects = projectModels.map((model) => model.toEntity()).toList();
-      return Right(projects);
-    } on ServerException {
-      return Left(
-        ServerFailure('Something\'s wrong from server. Please try again later'),
+      final repos = await remoteDataSource.getGitHubRepos();
+      return Right(repos.map((repo) => repo.toEntity()).toList());
+    } catch (error) {
+      developer.log(
+        'Live GitHub repositories unavailable, using snapshot',
+        name: 'project.repository',
+        error: error,
       );
-    } on TimeoutException {
-      return Left(
-        TimeoutFailure(
-          'Connection timed out. Maybe check your internet connection?',
+    }
+
+    try {
+      final repos = await snapshotDataSource.getRepos();
+      return Right(repos.map((repo) => repo.toEntity()).toList());
+    } catch (error) {
+      return const Left(
+        ServerFailure(
+          'Could not load repositories from GitHub. Please try again later.',
         ),
       );
-    } catch (e) {
-      return Left(UnexpectedFailure('An unexpected error occurred: $e'));
     }
   }
 }

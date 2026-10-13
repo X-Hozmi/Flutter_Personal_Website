@@ -1,142 +1,242 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_personal_website/domain/entities/blog/blog.dart';
+import 'package:flutter_personal_website/presentation/controllers/blog_controller.dart';
+import 'package:flutter_personal_website/presentation/pages/home/parts/section_heading.dart';
+import 'package:flutter_personal_website/presentation/widgets/scrollable_page.dart';
+import 'package:flutter_personal_website/utils/state_enum.dart';
+import 'package:flutter_personal_website/presentation/widgets/remote_image.dart';
+import 'package:flutter_personal_website/utils/url_launch.dart';
+import 'package:get/get.dart';
 
 class BlogPage extends StatelessWidget {
-  const BlogPage({super.key});
+  BlogPage({super.key});
+
+  final BlogController blogController = Get.find<BlogController>();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
+    return ScrollablePage(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Blog Posts
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 5, // Replace with actual blog count
-            itemBuilder: (context, index) {
-              return _buildBlogCard(index);
-            },
+          const SectionHeading(
+            title: 'Blog',
+            subtitle:
+                'Writing about backend engineering, infrastructure, '
+                'and the occasional Flutter detour.',
+          ),
+          const SizedBox(height: 8),
+          Obx(() {
+            switch (blogController.state) {
+              case RequestState.initial || RequestState.loading:
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(32),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              case RequestState.error:
+                return _ErrorView(
+                  message: blogController.message,
+                  onRetry: blogController.refreshBlogs,
+                );
+              case RequestState.empty:
+                return _EmptyView(message: blogController.message);
+              case RequestState.loaded:
+                return _BlogList(blogs: blogController.blogs);
+            }
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+class _BlogList extends StatelessWidget {
+  const _BlogList({required this.blogs});
+
+  final List<Blog> blogs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final blog in blogs) _BlogCard(blog: blog),
+      ],
+    );
+  }
+}
+
+class _BlogCard extends StatelessWidget {
+  const _BlogCard({required this.blog});
+
+  final Blog blog;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return InkWell(
+      onTap: () => urlLauncher(Uri.parse(blog.guid)),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colors.outlineVariant),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (blog.thumbnail != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: RemoteImage(
+                  url: blog.thumbnail!,
+                  width: 72,
+                  height: 72,
+                  fallback: ColoredBox(
+                    color: colors.surfaceContainerHighest,
+                    child: const Icon(Icons.article_outlined),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    blog.title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    _formatDate(blog.pubDate),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  if (blog.categories.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (final category in blog.categories.take(4))
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              category,
+                              style: TextStyle(
+                                color: colors.primary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static String _formatDate(String raw) {
+    final parsed = DateTime.tryParse(raw);
+    if (parsed == null) return raw;
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return '${parsed.day} ${months[parsed.month - 1]} ${parsed.year}';
+  }
+}
+
+class _EmptyView extends StatelessWidget {
+  const _EmptyView({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.edit_note, size: 48, color: colors.onSurfaceVariant),
+          const SizedBox(height: 12),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 8),
+          Text(
+            'New posts will show up here automatically once published.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildBlogCard(int index) {
-    final blogs = [
-      {
-        'title': 'Flutter State Management: A Complete Guide',
-        'date': 'about 2 weeks ago',
-        'tags': ['Flutter', 'State-Management', 'Mobile-Development'],
-        'number': '01',
-      },
-      {
-        'title': 'Building Responsive UIs in Flutter',
-        'date': 'about 1 month ago',
-        'tags': ['Flutter', 'UI-Design', 'Responsive-Design'],
-        'number': '02',
-      },
-      {
-        'title': 'Firebase Integration with Flutter Apps',
-        'date': 'about 1 month ago',
-        'tags': ['Flutter', 'Firebase', 'Backend-Integration'],
-        'number': '03',
-      },
-      {
-        'title': 'Advanced Dart Programming Techniques',
-        'date': 'about 2 months ago',
-        'tags': ['Dart', 'Programming', 'Advanced-Concepts'],
-        'number': '04',
-      },
-      {
-        'title': 'My Journey as a Flutter Developer',
-        'date': 'about 3 months ago',
-        'tags': ['Personal', 'Career', 'Flutter-Development'],
-        'number': '05',
-      },
-    ];
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({required this.message, required this.onRetry});
 
-    final blog = blogs[index];
+  final String message;
+  final VoidCallback onRetry;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(20),
-      // decoration: BoxDecoration(
-      //   color: const Color(0xFF161B22),
-      //   borderRadius: BorderRadius.circular(8),
-      //   border: Border.all(color: const Color(0xFF30363D)),
-      // ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
         children: [
-          // Blog Number
-          Text(
-            blog['number'] as String,
-            style: const TextStyle(
-              // color: Colors.white30,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(width: 20),
-          // Blog Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  blog['title'] as String,
-                  style: const TextStyle(
-                    // color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  blog['date'] as String,
-                  style: const TextStyle(
-                    // color: Colors.white60,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children:
-                      (blog['tags'] as List<String>)
-                          .map(
-                            (tag) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF58A6FF).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                  color: const Color(
-                                    0xFF58A6FF,
-                                  ).withOpacity(0.3),
-                                ),
-                              ),
-                              child: Text(
-                                tag,
-                                style: const TextStyle(
-                                  color: Color(0xFF58A6FF),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                ),
-              ],
-            ),
+          const Icon(Icons.error_outline, color: Colors.red, size: 44),
+          const SizedBox(height: 12),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Retry'),
           ),
         ],
       ),

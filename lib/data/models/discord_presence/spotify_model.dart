@@ -21,12 +21,14 @@ class SpotifyModel extends Equatable {
 
   factory SpotifyModel.fromJson(Map<String, dynamic> json) {
     return SpotifyModel(
-      trackId: json['track_id'] ?? '',
-      timestamps: SpotifyTimestampsModel.fromJson(json['timestamps']),
-      song: json['song'] ?? '',
-      artist: json['artist'] ?? '',
-      albumArtUrl: json['album_art_url'] ?? '',
-      album: json['album'] ?? '',
+      trackId: json['track_id'] as String? ?? '',
+      timestamps: SpotifyTimestampsModel.fromJson(
+        json['timestamps'] as Map<String, dynamic>,
+      ),
+      song: json['song'] as String? ?? '',
+      artist: json['artist'] as String? ?? '',
+      albumArtUrl: json['album_art_url'] as String? ?? '',
+      album: json['album'] as String? ?? '',
     );
   }
 

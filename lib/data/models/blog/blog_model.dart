@@ -18,13 +18,16 @@ class BlogModel extends Equatable {
 
   factory BlogModel.fromJson(Map<String, dynamic> json) {
     return BlogModel(
-      title: json['title'] ?? '',
-      pubDate: json['pubDate'] ?? '',
-      guid: json['guid'] ?? '',
-      thumbnail: json['thumbnail']?.isEmpty ? null : json['thumbnail'],
+      title: json['title'] as String? ?? '',
+      pubDate: json['pubDate'] as String? ?? '',
+      guid: json['guid'] as String? ?? '',
+      thumbnail:
+          (json['thumbnail'] as String?)?.isEmpty ?? true
+              ? null
+              : json['thumbnail'] as String?,
       categories:
           json['categories'] != null
-              ? List<String>.from(json['categories'])
+              ? List<String>.from(json['categories'] as List<dynamic>)
               : <String>[],
     );
   }

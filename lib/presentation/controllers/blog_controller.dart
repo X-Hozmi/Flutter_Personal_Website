@@ -16,6 +16,12 @@ class BlogController extends GetxController {
 
   BlogController({required this.getBlogsUseCase});
 
+  @override
+  void onInit() {
+    super.onInit();
+    getBlogs();
+  }
+
   Future<void> getBlogs() async {
     _state.value = RequestState.loading;
     update();
@@ -44,9 +50,7 @@ class BlogController extends GetxController {
     update();
   }
 
-  Future<void> refreshBlogs() async {
-    await getBlogs();
-  }
+  Future<void> refreshBlogs() => getBlogs();
 
   void clearBlogs() {
     _blogs.clear();
